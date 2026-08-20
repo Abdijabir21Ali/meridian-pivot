@@ -1,0 +1,21 @@
+{
+  "name": "meridian-pivot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abdijabir21Ali/meridian-pivot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Abdijabir21Ali/meridian-pivot/issues"
+  },
+  "homepage": "https://github.com/Abdijabir21Ali/meridian-pivot#readme"
+}
