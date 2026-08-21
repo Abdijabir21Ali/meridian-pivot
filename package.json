@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Abdijabir21Ali/meridian-pivot/issues"
   },
-  "homepage": "https://github.com/Abdijabir21Ali/meridian-pivot#readme"
+  "homepage": "https://github.com/Abdijabir21Ali/meridian-pivot#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
