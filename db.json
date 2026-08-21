@@ -8,12 +8,12 @@
     {
       "id": "ATT-002",
       "name": "Bob",
-      "status": "not_checked_in"
+      "status": "checked_in"
     },
     {
       "id": "ATT-003",
       "name": "Charlie",
-      "status": "checked_in"
+      "status": "not_checked_in"
     }
   ]
 }

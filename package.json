@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "worker": "node src/queueWorker.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,10 @@
   },
   "homepage": "https://github.com/Abdijabir21Ali/meridian-pivot#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "axios": "^1.19.0",
+    "bull": "^4.16.5",
+    "express": "^5.2.1",
+    "ioredis": "^6.0.0",
+    "uuid": "^14.0.2"
   }
 }
