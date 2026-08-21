@@ -1,76 +1,61 @@
-const express = require("express");
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
-app.use(express.json());
-
 const PORT = 3000;
 
-// Temporary attendees — we'll replace this with a database later.
-const attendees = [
-  { id: "A001", name: "Ahmed Ali", checkedIn: false },
-  { id: "A002", name: "Fatuma Hassan", checkedIn: false },
-  { id: "A003", name: "Mohamed Omar", checkedIn: false }
-];
+app.use(express.json());
+app.use(express.static('public'));
 
-// Fake synchronous badge printer
-function printBadge(attendee) {
-  console.log(`Printing badge for ${attendee.name}...`);
+const DB_PATH = path.join(__dirname, 'db.json');
 
-  return {
-    success: true,
-    message: `Badge printed for ${attendee.name}`
-  };
-}
+const readDB = () => JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+const writeDB = (data) => fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 
-// Check-in endpoint
-app.post("/check-in", (req, res) => {
-  const { attendeeId } = req.body;
-
-  const attendee = attendees.find(
-    (person) => person.id === attendeeId
-  );
-
-  if (!attendee) {
-    return res.status(404).json({
-      success: false,
-      message: "Attendee not found"
+const mockPrintBadge = (attendeeId) => {
+    return new Promise((resolve) => {
+        console.log(`🖨️ Printing badge for ${attendeeId}...`);
+        setTimeout(() => {
+            console.log(`✅ Badge printed for ${attendeeId}`);
+            resolve({ success: true });
+        }, 2000);
     });
-  }
+};
 
-  // Prevent duplicate badge printing
-  if (attendee.checkedIn) {
-    return res.status(409).json({
-      success: false,
-      message: "Attendee is already checked in"
-    });
-  }
+app.post('/checkin', async (req, res) => {
+    const { attendeeId } = req.body;
 
-  // ORIGINAL REQUIREMENT:
-  // Call printer and WAIT for successful printing.
-  const printResult = printBadge(attendee);
+    if (!attendeeId) {
+        return res.status(400).json({ error: 'Missing attendeeId' });
+    }
 
-  if (!printResult.success) {
-    return res.status(500).json({
-      success: false,
-      message: "Badge printing failed"
-    });
-  }
+    const db = readDB();
+    const attendee = db.attendees.find(a => a.id === attendeeId);
 
-  // Only mark checked-in AFTER successful printing.
-  attendee.checkedIn = true;
+    if (!attendee) {
+        return res.status(404).json({ error: 'Attendee not found' });
+    }
 
-  res.json({
-    success: true,
-    status: "Checked In",
-    attendee: attendee.name,
-    message: printResult.message
-  });
-});
+    if (attendee.status === 'checked_in') {
+        return res.status(409).json({ error: 'Already checked in. No second badge printed.' });
+    }
 
-app.get("/", (req, res) => {
-  res.send("Meridian Pivot - Event Check-in Service");
+    try {
+        await mockPrintBadge(attendeeId);
+        attendee.status = 'checked_in';
+        writeDB(db);
+
+        res.json({ 
+            success: true, 
+            message: `${attendee.name} checked in successfully!`,
+            attendee 
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Printing failed' });
+    }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Kiosk running at http://localhost:${PORT}`);
 });
